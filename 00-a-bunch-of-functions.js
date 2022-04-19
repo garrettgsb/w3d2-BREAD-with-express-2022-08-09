@@ -41,34 +41,12 @@ function reset() { setTo(0); }
 
   app.get('/increment', (request, response) => { increment(); response.redirect('/') });
   app.get('/decrement', (request, response) => { decrement(); response.redirect('/') });
-  app.get('/reset', (request, response) => { reset(); response.redirect('https://google.com') });
-
-  /*
-    Query string params:
-
-    http://localhost:8080/set?newCounterValue=55555&someOtherValue=hello
-
-    ? -> Start the query string params
-    newCounterValue -> The key that shows up in `request.query`
-    55555 -> The value that the user (presumably) typed into the form
-    & -> Separates key-value pairs
-
-    Three places to look for your "stuff":
-      * request.params -> URL params (e.g. /users/:id) - :id is the param
-      * request.query -> Form data from a GET request (Query string params)
-      * request.body -> Form data from a POST request
-
-    `/users/1`
-    `/users/:id`, request.params.id -> 1
-
-    website.com/search?term=shoes
-  */
-
+  app.get('/reset', (request, response) => { reset(); response.redirect('/') });
   app.get('/set', (request, response) => {
     const { newCounterValue } = request.query;
     if (newCounterValue) setTo(newCounterValue);
     response.redirect('/')
   });
 
-  app.listen(8080, () => { console.log(`Listening on ${PORT}!`)});
+  // app.listen(8080, () => { console.log(`Listening on ${PORT}!`)});
 }
