@@ -1,26 +1,24 @@
 const fs = require('fs');
 
 function readCounter() { return Number(fs.readFileSync('./counter')); }
-function writeCounter(value) { return fs.writeFileSync('./counter', value);  }
+function writeCounter(value) { return fs.writeFileSync('./counter', String(value));  }
 
 function increment() { writeCounter(readCounter() + 1); }
 function decrement() { writeCounter(readCounter() - 1); }
 function setTo(value) { writeCounter(Number(value)); }
 function reset() { setTo(0); }
 
-
 // Mapping between Javascript functions and command line interface
 {
   const [_interpreter, _file, operation, value] = process.argv;
-  console.log('Args:', process.argv);
-  if (operation === 'increment') { increment(); console.log(`After ${operation}: ${readCounter()}`)}
-  else if (operation === 'decrement') { decrement(); console.log(`After ${operation}: ${readCounter()}`)}
-  else if (operation === 'set') { setTo(value); console.log(`After ${operation}: ${readCounter()}`)}
-  else if (operation === 'reset') { reset(); console.log(`After ${operation}: ${readCounter()}`)}
+  if (operation === 'increment') { increment(); console.log(`After ${operation}: ${readCounter()}`) }
+  else if (operation === 'decrement') { decrement(); console.log(`After ${operation}: ${readCounter()}`) }
+  else if (operation === 'set') { setTo(value); console.log(`After ${operation}: ${readCounter()}`) }
+  else if (operation === 'reset') { reset(); console.log(`After ${operation}: ${readCounter()}`) }
   else { console.log(`Count is: ${readCounter()}`) }
 }
 
-//Mapping between Javascript functions and HTTP interface
+// Mapping between Javascript functions and HTTP interface
 {
   const express = require('express');
   const app = express();
@@ -48,5 +46,5 @@ function reset() { setTo(0); }
     response.redirect('/')
   });
 
-  // app.listen(8080, () => { console.log(`Listening on ${PORT}!`)});
+  app.listen(8080, () => { console.log(`Listening on ${PORT}!`) });
 }

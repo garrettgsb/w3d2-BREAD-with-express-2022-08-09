@@ -44,7 +44,7 @@ const blogs = [
     to those countries, to reach which at present so many months are
     requisite; or by ascertaining the secret of the magnet, which, if at
     all possible, can only be effected by an undertaking such as mine.
-    </p>`
+    </p>`,
   },
   {
     authorId: 1,
@@ -444,6 +444,62 @@ function getBlogsForAuthor(authorId) {
   return blogs.filter(blog => blog.authorId.toLowerCase() === Number(authorId));
 }
 
+// Post-lecture example of nested resources
+// GET '/authors/:id/blogs'
+app.get('/authors/:id/blogs', (request, response) => {
+  const blogs = getBlogsForAuthor(request.params.id);
+  request.send(`<h1>Blogs</h1>`);
+});
+
+// This was a post-lecture example of how the Express framework might approach
+// figuring out which parts of an incoming URL are variables.
+// Under the hood, it's just regular Javascript that you could have written :)
+function parseParamsFromUrl(url, urlTemplate) {
+  '/authors/6/blogs'
+  '/authors/:id'
+  '/categories/:category'
+  '/locations/:latitude/:longitude'
+  const segments = url.split('/');
+  // [authors, :id, blogs]
+  const variables = segments.filter(segment => segment.startsWith(':'));
+}
+
+/*
+  Post-lecture example of what you might use URL params for
+  other than resource IDs. This example was based on how
+  fillmurray.com lets you define the width and height of the
+  Bill Murray filler image that you're asking for.
+
+  So if you put an <img src="fillmurray.com/400/800"> onto your
+  page, you'll get an image of Bill Murray, formatted
+  to be 400px wide, and 800px tall.
+*/
+app.get('/:width/:height');
+
+
+/*
+  Post-lecture example of route precedence, and another example
+  of what you might use URL params for other than IDs.
+
+  `/categories/all`, `/categories/best`, and `/categories/terror`
+  are all routes that you've decided to handle in some special way,
+  so they get first priority to handle requests that comes in.
+
+  `/categories/anything-else` will hit the endpoint with the variable
+  instead, and handle it in the "normal" way.
+
+  If `/categories/:category` came _before_ the others, then the
+  others could never be reached, because they would match the
+  variable (:category) first!
+*/
+app.get('/categories/all');
+app.get('/categories/best');
+app.get('/categories/terror', (req,res) => res.redirect('/categories/horror'));
+app.get('/categories/:category');
+
+app.post('/blogs/:id');
+app.post('/blogs/:id/delete');
+
 function editBlog(id, newValues) {
   const blog = getBlogById(id);
   if (!blog) throw new Error(`Blog with ID ${id} could not be found`);
@@ -486,3 +542,24 @@ function deleteAuthor(id) {
   const authorIdx = authors.indexOf(author);
   authors.splice(authorIdx, 1);
 }
+
+
+/*
+
+GET /blogs                -> Just render the blogs array
+GET /blogs/:id            -> getBlogById()
+POST /blogs               -> addBlog()
+POST /blogs/:id           -> editBlog()
+POST /blogs/:id/delete    -> deleteBlog()
+
+GET /authors              -> Just render the authors array
+GET /authors/:id          -> getAuthorById() (Might also involve getBlogsForAuthor())
+POST /authors             -> addAuthor()
+POST /authors/:id         -> editAuthor()
+POST /authors/:id/delete  -> deleteAuthor()
+
+Bonus:
+
+GET /authors/:id/blogs    -> getBlogsForAuthor()
+
+*/
